@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+
 import os
 import maya.cmds as cmds
 
@@ -43,7 +47,7 @@ class M2R_UI(QWidget):
         loader = QUiLoader()        
         #currentDir = os.path.dirname(__file__)
         currentDir = r"D:\Personal_works\python\maya_scripts"
-        file = QFile(currentDir+"/megascanToRenderman.ui")        
+        file = QFile(currentDir+"/ms_to_prman.py.ui")        
         file.open(QFile.ReadOnly) 
         self.ui = loader.load(file, parentWidget=self)        
         file.close()
@@ -239,11 +243,6 @@ class M2R_UI(QWidget):
                     cmds.setAttr("%s.filename"%nodes[7],pxrTex,type="string")
                 '''
                                         
-                
-                                
 
-
-def MegascanToRenderman():
-
-    m2r_ui = M2R_UI()
+m2r_ui = M2R_UI()
     
