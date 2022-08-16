@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>186</height>
+    <width>597</width>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,27 +16,37 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>110</y>
-     <width>75</width>
+     <x>30</x>
+     <y>370</y>
+     <width>551</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>ok</string>
+    <string>replace shader</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="textEdit">
+  <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>60</y>
-     <width>541</width>
+     <x>24</x>
+     <y>62</y>
+     <width>551</width>
      <height>31</height>
     </rect>
    </property>
-   <property name="placeholderText">
-    <string>folder here</string>
+   <property name="text">
+    <string>Analyse</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="listWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>150</y>
+     <width>541</width>
+     <height>192</height>
+    </rect>
    </property>
   </widget>
  </widget>

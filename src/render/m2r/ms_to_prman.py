@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-import os
+import os,sys
 import maya.cmds as cmds
 
 
@@ -18,6 +18,14 @@ from shiboken2 import wrapInstance
 import rfm2
 
 
+def onMayaDroppedPythonFile(obj):
+
+    sys_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')) 
+
+    sys.path.append(sys_path) #install this mod to maya
+    
+
+
 class M2R_UI(QWidget): 
     
     def __init__(self, *args, **kwargs):        
@@ -27,43 +35,144 @@ class M2R_UI(QWidget):
         self.mayaMainWindow = wrapInstance(long(self.mayaMainWindowPtr), QWidget) 
 
         #Set the object name     
-        self.setObjectName('M2R_UI')        
+        self.setObjectName('M2R_UI')
         self.setWindowTitle('M2R_UI')
 
         #Parent widget under Maya main window        
         self.setParent(self.mayaMainWindow) 
         self.setWindowFlags(Qt.Window)
 
-        self.folder = r''
+        self.obj_list = []
+        self.folder_list = []
+        self.obj_folder_dict = {}
 
-        self.initUI()
+
+    def initUI(self,root_path):
+        loader = QUiLoader()
+        file = QFile(root_path+"/ms_to_prman.py.ui")
+        file.open(QFile.ReadOnly) 
+        self.ui = loader.load(file, parentWidget=self)
+        file.close()
+
+        # Call anaylse if user click 'analyse' button
+        self.ui.pushButton_2.clicked.connect( self.analyse )
+        
+        # Call process if user clicks 'replace' button        
+
+        self.ui.pushButton.clicked.connect( self.process )
 
         self.show()
 
+    @Slot()
+    def analyse(self):
 
+        self.ui.listWidget.clear()
 
+        self.obj_list = []
+        self.folder_list = []
+        self.obj_folder_dict = {}
 
-    def initUI(self):
-        loader = QUiLoader()        
-        #currentDir = os.path.dirname(__file__)
-        currentDir = r"D:\Personal_works\python\maya_scripts"
-        file = QFile(currentDir+"/ms_to_prman.py.ui")        
-        file.open(QFile.ReadOnly) 
-        self.ui = loader.load(file, parentWidget=self)        
-        file.close()
+        #get selected object
+        self.obj_list =  cmds.ls(dag=1,o=1,s=1,sl=1)
+        # get shading groups from shapes:
+        shadingGrps = cmds.listConnections(self.obj_list,type='shadingEngine')
+        # get the shaders:
+        shader_list = cmds.ls(cmds.listConnections(shadingGrps),materials=1)
+
+        #loop in shaders
+        for i,shader in enumerate(shader_list):
+            
+            op_tex = cmds.listConnections( "%s.opacity"%shader) #get opacity texture 
+            op_tex_filename = cmds.getAttr("%s.fileTextureName"%op_tex[0]) #get the opacity texture filename
+            tex_folder = os.path.dirname(op_tex_filename) #from opacity texture filename get the texture folder
+            #print(tex_folder)
+            self.folder_list.append(tex_folder) #get final folder list            
+            self.obj_folder_dict[self.obj_list[i]] = tex_folder # append dictionary
+
         
-        # Call doOK if user clicks OK button
-        self.ui.pushButton.clicked.connect( self.doOK )
+        #remove duplicated items
+        self.folder_list = list(set(self.folder_list))      
+         
+        self.ui.listWidget.addItems(self.folder_list) 
     
     @Slot()
-    def doOK(self):
+    def process(self):
 
-        self.folder = self.ui.textEdit.toPlainText()
-        self.connectTextures()
+        for folder in self.folder_list:
+
+            self.folder = folder
+            self.connectTextures(folder)
 
 
 
-    def createPxrNetwork(self):
+    def connectTextures(self,folder):
+
+        #create shading network
+
+        if(len(folder)>0):
+
+            #from folder name ,get object
+            objs = [key for key, value in self.obj_folder_dict.items() if value == folder]
+            print(objs)
+
+            cmds.select(objs)
+
+            nodes = self.create_PxrNetwork()
+            #print(nodes)
+
+            #folder name :  r"R:\Megascan\Downloaded\surface\fabric_leather_tlooadar"
+            #file naming style :  wfzobb2ia_8K_AO.jpg
+
+            
+            textures = os.listdir(folder)
+
+            for texture in textures:
+
+                texName = os.path.splitext(texture) 
+                
+                if(texName[0].endswith("AO")==True):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[0],pxrTex,type="string")
+
+                if(texName[0].endswith("Albedo")==True):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[1],pxrTex,type="string")
+                
+                
+                if(texName[0].endswith("Normal")==True  or texName[0].endswith("Normal_LOD0")== True ):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[2],pxrTex,type="string")
+
+                if(texName[0].endswith("Metalness")==True):
+                
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[3],pxrTex,type="string")
+
+                if(texName[0].endswith("Roughness")==True):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[4],pxrTex,type="string")
+                
+                if(texName[0].endswith("Displacement")==True):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[5],pxrTex,type="string")
+                
+                if(texName[0].endswith("Opacity")==True):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[6],pxrTex,type="string")
+                '''
+                if(texName[0].endswith("Translucency")==True):
+
+                    pxrTex = (os.path.join(folder,texture))
+                    cmds.setAttr("%s.filename"%nodes[7],pxrTex,type="string")
+                '''
+
+    def create_PxrNetwork(self):
         
         sgNode = rfm2.api.nodes.create_and_assign_bxdf('PxrSurface')
         dispNode = rfm2.api.nodes.create_node( '' , 'PxrDisplace')[8:-1]
@@ -179,70 +288,10 @@ class M2R_UI(QWidget):
 
         return nodes
 
+# ====================================
+import ms_to_prman
 
-    def connectTextures(self):
-
-        #create shading network
-
-        folder = self.folder
-
-        if(len(folder)>0):
-
-            nodes = self.createPxrNetwork()
-            #print(nodes)
-
-            #folder = r"R:\Megascan\Downloaded\surface\fabric_leather_tlooadar"
-
-            
-            textures = os.listdir(folder)
-
-            for texture in textures:
-
-                texName = os.path.splitext(texture)
-            
-                
-                if(texName[0].endswith("AO")==True):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[0],pxrTex,type="string")
-
-                if(texName[0].endswith("Albedo")==True):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[1],pxrTex,type="string")
-                
-                
-                if(texName[0].endswith("Normal")==True  or texName[0].endswith("Normal_LOD0")== True ):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[2],pxrTex,type="string")
-
-                if(texName[0].endswith("Metalness")==True):
-                
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[3],pxrTex,type="string")
-
-                if(texName[0].endswith("Roughness")==True):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[4],pxrTex,type="string")
-                
-                if(texName[0].endswith("Displacement")==True):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[5],pxrTex,type="string")
-                
-                if(texName[0].endswith("Opacity")==True):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[6],pxrTex,type="string")
-                '''
-                if(texName[0].endswith("Translucency")==True):
-
-                    pxrTex = (os.path.join(folder,texture))
-                    cmds.setAttr("%s.filename"%nodes[7],pxrTex,type="string")
-                '''
-                                        
-
+root_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ))) #after install we can get the current file's path
 m2r_ui = M2R_UI()
+m2r_ui.initUI(root_path)
     
