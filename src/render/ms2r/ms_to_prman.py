@@ -17,7 +17,7 @@ from shiboken2 import wrapInstance
 
 import rfm2
 
-
+#=================== install function
 def onMayaDroppedPythonFile(obj):
 
     sys_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')) 
