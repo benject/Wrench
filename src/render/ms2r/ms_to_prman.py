@@ -35,8 +35,8 @@ class M2R_UI(QWidget):
         self.mayaMainWindow = wrapInstance(long(self.mayaMainWindowPtr), QWidget) 
 
         #Set the object name     
-        self.setObjectName('M2R_UI')
-        self.setWindowTitle('M2R_UI')
+        self.setObjectName('MS2R_UI')
+        self.setWindowTitle('MS2R_UI')
 
         #Parent widget under Maya main window        
         self.setParent(self.mayaMainWindow) 
