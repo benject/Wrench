@@ -1,0 +1,255 @@
+{
+    "header": {
+        "metadata": [
+            {
+                "metaName": "adskFileFormatVersion",
+                "metaValue": "100L"
+            }
+        ]
+    },
+    "dependencies": [
+        {
+            "uri": "file:///Math_types.json"
+        },
+        {
+            "uri": "file:///Math_bool.json"
+        },
+        {
+            "uri": "file:///Math_float.json"
+        },
+        {
+            "uri": "file:///Math_double.json"
+        },
+        {
+            "uri": "file:///Math_ulong.json"
+        },
+        {
+            "uri": "file:///Math_char.json"
+        },
+        {
+            "uri": "file:///Math_int.json"
+        },
+        {
+            "uri": "file:///Math_long.json"
+        },
+        {
+            "uri": "file:///Math_short.json"
+        },
+        {
+            "uri": "file:///Math_uchar.json"
+        },
+        {
+            "uri": "file:///Math_uint.json"
+        },
+        {
+            "uri": "file:///Math_ushort.json"
+        }
+    ],
+    "namespaces": [],
+    "types": [],
+    "compounds": [
+        {
+            "name": "Core::Math::within_bounds",
+            "uriImported": "file:///within_bounds.json",
+            "metadata": [
+                {
+                    "metaName": "ViewportRect",
+                    "metaType": "string",
+                    "metaValue": "-985.055 -231.754 1472.26 523.187"
+                },
+                {
+                    "metaName": "io_nodes",
+                    "metadata": [
+                        {
+                            "metaName": "io_inodes",
+                            "metadata": [
+                                {
+                                    "metaName": "input",
+                                    "metadata": [
+                                        {
+                                            "metaName": "io_ports",
+                                            "metadata": [
+                                                {
+                                                    "metaName": "value"
+                                                },
+                                                {
+                                                    "metaName": "bounds_min"
+                                                },
+                                                {
+                                                    "metaName": "bounds_max"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "metaName": "io_onodes",
+                            "metadata": [
+                                {
+                                    "metaName": "output",
+                                    "metadata": [
+                                        {
+                                            "metaName": "io_ports",
+                                            "metadata": [
+                                                {
+                                                    "metaName": "in_bounds"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "metaName": "icon",
+                    "metaType": "string",
+                    "metaValue": "../icons/rebelPack.svg"
+                }
+            ],
+            "ports": [
+                {
+                    "portName": "value",
+                    "portDirection": "input"
+                },
+                {
+                    "portName": "bounds_min",
+                    "portDirection": "input"
+                },
+                {
+                    "portName": "bounds_max",
+                    "portDirection": "input"
+                },
+                {
+                    "portName": "in_bounds",
+                    "portDirection": "output",
+                    "portType": "auto"
+                }
+            ],
+            "compoundNodes": [
+                {
+                    "nodeName": "all_members_true",
+                    "nodeType": "Core::Logic::all_members_true",
+                    "metadata": [
+                        {
+                            "metaName": "DisplayMode",
+                            "metaType": "string",
+                            "metaValue": "2"
+                        },
+                        {
+                            "metaName": "LayoutPos",
+                            "metaType": "string",
+                            "metaValue": "-341 26"
+                        }
+                    ]
+                },
+                {
+                    "nodeName": "all_members_true1",
+                    "nodeType": "Core::Logic::all_members_true",
+                    "metadata": [
+                        {
+                            "metaName": "DisplayMode",
+                            "metaType": "string",
+                            "metaValue": "2"
+                        },
+                        {
+                            "metaName": "LayoutPos",
+                            "metaType": "string",
+                            "metaValue": "-351 -151"
+                        }
+                    ]
+                },
+                {
+                    "nodeName": "and",
+                    "nodeType": "Core::Logic::and",
+                    "metadata": [
+                        {
+                            "metaName": "DisplayMode",
+                            "metaType": "string",
+                            "metaValue": "2"
+                        },
+                        {
+                            "metaName": "LayoutPos",
+                            "metaType": "string",
+                            "metaValue": "-80 -89"
+                        }
+                    ]
+                },
+                {
+                    "nodeName": "members_greater_or_equal",
+                    "nodeType": "Core::Logic::members_greater_or_equal",
+                    "metadata": [
+                        {
+                            "metaName": "DisplayMode",
+                            "metaType": "string",
+                            "metaValue": "2"
+                        },
+                        {
+                            "metaName": "LayoutPos",
+                            "metaType": "string",
+                            "metaValue": "-591 -183"
+                        }
+                    ]
+                },
+                {
+                    "nodeName": "members_less_or_equal",
+                    "nodeType": "Core::Logic::members_less_or_equal",
+                    "metadata": [
+                        {
+                            "metaName": "DisplayMode",
+                            "metaType": "string",
+                            "metaValue": "2"
+                        },
+                        {
+                            "metaName": "LayoutPos",
+                            "metaType": "string",
+                            "metaValue": "-600 43"
+                        }
+                    ]
+                }
+            ],
+            "connections": [
+                {
+                    "source": "all_members_true.output",
+                    "target": "and.second"
+                },
+                {
+                    "source": "all_members_true1.output",
+                    "target": "and.first"
+                },
+                {
+                    "source": "and.output",
+                    "target": ".in_bounds"
+                },
+                {
+                    "source": "members_greater_or_equal.output",
+                    "target": "all_members_true1.value"
+                },
+                {
+                    "source": "members_less_or_equal.output",
+                    "target": "all_members_true.value"
+                },
+                {
+                    "source": ".value",
+                    "target": "members_greater_or_equal.first"
+                },
+                {
+                    "source": ".value",
+                    "target": "members_less_or_equal.first"
+                },
+                {
+                    "source": ".bounds_min",
+                    "target": "members_greater_or_equal.second"
+                },
+                {
+                    "source": ".bounds_max",
+                    "target": "members_less_or_equal.second"
+                }
+            ],
+            "values": []
+        }
+    ]
+}
